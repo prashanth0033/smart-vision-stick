@@ -1,0 +1,54 @@
+// Define pins
+#define trigPin 9
+#define echoPin 8
+#define waterSensor A0
+#define fireSensor 7
+#define buzzer 6
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(waterSensor, INPUT);
+  pinMode(fireSensor, INPUT);
+  pinMode(buzzer, OUTPUT);
+}
+
+void loop() {
+  // Ultrasonic Sensor
+  long duration;
+  int distance;
+  
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  duration = pulseIn(echoPin, HIGH);
+  distance = duration * 0.034 / 2;
+  
+  Serial.print("Distance: ");
+  Serial.print(distance);
+  Serial.println(" cm");
+
+  // Water Sensor
+  int waterValue = analogRead(waterSensor);
+  Serial.print("Water Value: ");
+  Serial.println(waterValue);
+
+  // Fire Sensor
+  int fireValue = digitalRead(fireSensor);
+  Serial.print("Fire Detected (0=Yes, 1=No): ");
+  Serial.println(fireValue);
+
+  // Check conditions
+  if (distance < 30 || waterValue > 500 || fireValue == 0) {
+    digitalWrite(buzzer, HIGH);
+  } else {
+    digitalWrite(buzzer, LOW);
+  }
+
+  delay(500);
+}
